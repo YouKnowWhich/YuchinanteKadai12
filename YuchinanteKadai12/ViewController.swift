@@ -14,7 +14,7 @@ class ViewController: UIViewController {
 
     // 消費税率入力用のテキストフィールド
     @IBOutlet weak var salesTaxRateTextField: UITextField!
-    
+
     // 価格（税込み）表示用のラベル
     @IBOutlet weak var amountIncludingTaxLabel: UILabel!
 
@@ -26,25 +26,24 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         // UserDefaultsから消費税率を取得してテキストフィールドに表示
-        if UserDefaults.standard.object(forKey: KeySalesTaxRate) != nil {
-            salesTaxRateTextField.text! = UserDefaults.standard.object(forKey: KeySalesTaxRate) as! String
+        if let salesTaxRate = UserDefaults.standard.object(forKey: KeySalesTaxRate) as? String {
+            salesTaxRateTextField.text = salesTaxRate
         }
     }
 
     // 消費税率が変更された時のアクション
     @IBAction func salesTaxRateAction(sender: AnyObject) {
         // UserDefaultsに消費税率を保存し、同期する
-        UserDefaults.standard.set(self.salesTaxRateTextField.text, forKey:KeySalesTaxRate)
-        UserDefaults.standard.synchronize()
+        UserDefaults.standard.set(self.salesTaxRateTextField.text, forKey: KeySalesTaxRate)
     }
 
     // 計算ボタンがタップされた時のアクション
     @IBAction func calculationButton(sender: AnyObject) {
         // 価格（税抜き）を取得
-        let amountExcludingTax = (amountExcludingTaxTextField.text! as NSString).integerValue
+        let amountExcludingTax = Int(amountExcludingTaxTextField.text ?? "") ?? 0
 
         // 消費税率を取得
-        let salesTaxRate = (salesTaxRateTextField.text! as NSString).floatValue
+        let salesTaxRate = Float(salesTaxRateTextField.text ?? "") ?? 0
 
         // 価格（税込み）を計算してラベルに表示
         let amountIncludingTax = Int(Float(amountExcludingTax) * (1.0 + salesTaxRate / 100.0))
